@@ -1,0 +1,11 @@
+# === Skript's variable storage ===
+# Please do not modify this file manually!
+#
+# version: 2.8.7
+
+dungeon.admin, offlineplayer, 810475756964800455554944820C6C656173745369674269747304B62B5A9D09863B860B6D6F737453696742697473045429CD84C8A44F49
+dungeon.exit.x, long, 0000000000000076
+dungeon.exit.z, long, 000000000000002B
+dungeon.floor-y, long, FFFFFFFFFFFFFFC5
+dungeon.open, boolean, 00
+

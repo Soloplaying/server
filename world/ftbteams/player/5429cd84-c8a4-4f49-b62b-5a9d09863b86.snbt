@@ -1,0 +1,17 @@
+{
+	id: "5429cd84-c8a4-4f49-b62b-5a9d09863b86"
+	type: "player"
+	player_name: "Yummy_Tuna"
+	ranks: {
+		5429cd84-c8a4-4f49-b62b-5a9d09863b86: "owner"
+	}
+	properties: {
+		"ftbteams:display_name": "Yummy_Tuna"
+		"ftbteams:description": ""
+		"ftbteams:color": "#9C59FF"
+		"ftbteams:free_to_join": 0b
+		"ftbteams:max_msg_history_size": 1000
+	}
+	message_history: [ ]
+	extra: { }
+}

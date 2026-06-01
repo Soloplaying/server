@@ -1,0 +1,611 @@
+# =============================================
+# DUNGEON SYSTEM - dungeon.sk
+# =============================================
+# Requirements:
+#   - Skript 2.8.7
+#   - SkBee 3.6.1
+#   - Multiverse-Core 4.3.12
+#   - TangledMaze+
+# =============================================
+
+# --- CONFIGURATION ---
+# ⚠️ CHANGE THESE TO MATCH YOUR SERVER! ⚠️
+options:
+    # Entry portal location in farming world
+    portal-x: 0
+    portal-y: 64
+    portal-z: 0
+    portal-world: world
+    dungeon-world: dungeon
+
+    # Maze bounds for random spawn/exit portal
+    maze-min-x: -130
+    maze-max-x: 130
+    maze-min-z: -130
+    maze-max-z: 130
+    maze-floor-y: -60
+
+    # Timers
+    dungeon-reset-timer: 45 minutes
+    player-time-limit: 30 minutes
+
+# =============================================
+# ON SERVER START
+# =============================================
+on script load:
+    set {dungeon.open} to false
+    broadcast "&8[&4Dungeon&8] &7Server started. Dungeon cycle initializing..."
+    wait 10 seconds
+    resetDungeon()
+
+# =============================================
+# FUNCTIONS
+# =============================================
+
+# Spawn random portal after delay - runs in background via wait
+function spawnRandomPortalDelayed(cycle: number):
+    set {_rdelay} to a random integer between 300 and 600
+    set {_rdelay-time} to "%{_rdelay}% seconds" parsed as timespan
+    wait {_rdelay-time}
+    # Only spawn if dungeon is still open, portal not spawned, and same cycle
+    if {dungeon.open} is true:
+        if {dungeon.random.portal.spawned} is false:
+            if {dungeon.cycle.id} is {_cycle}:
+                set {dungeon.random.portal.spawned} to true
+                set {dungeon.exit.x} to a random integer between {@maze-min-x} and {@maze-max-x}
+                set {dungeon.exit.z} to a random integer between {@maze-min-z} and {@maze-max-z}
+                set {dungeon.exit.y} to -60
+                set block at location({dungeon.exit.x}, {dungeon.exit.y} + 1, {dungeon.exit.z}, world "{@dungeon-world}") to nether portal
+                set block at location({dungeon.exit.x}, {dungeon.exit.y} + 2, {dungeon.exit.z}, world "{@dungeon-world}") to nether portal
+                set block at location({dungeon.exit.x}, {dungeon.exit.y} + 3, {dungeon.exit.z}, world "{@dungeon-world}") to nether portal
+                broadcast "&8[&4Dungeon&8] &6A random exit portal has appeared inside the dungeon!"
+                broadcast "&8[&4Dungeon&8] &eRandom exit: &fX: %{dungeon.exit.x}% Z: %{dungeon.exit.z}%"
+
+# Shrink world border gradually toward center
+function shrinkBorderDelayed(cycle: number):
+    # Wait 10 minutes before starting to shrink
+    set {_shrink-delay} to "30 seconds" parsed as timespan
+    wait {_shrink-delay}
+    if {dungeon.open} is true:
+        if {dungeon.cycle.id} is {_cycle}:
+            set {dungeon.border.shrunk} to true
+            set {dungeon.current.border.radius} to 138
+
+            # Stage 1 — First shrink after 5 minutes
+            set {_wait-1} to "5 minutes" parsed as timespan
+            wait {_wait-1}
+            if {dungeon.open} is true:
+                if {dungeon.cycle.id} is {_cycle}:
+                    set {dungeon.current.border.radius} to 100
+                    broadcast "&8[&4Dungeon&8] &c&lThe border is closing in! &eRadius: 100 blocks"
+                    broadcast "&8[&4Dungeon&8] &cGet closer to the center!"
+
+            # Stage 2 — Second shrink after 10 more minutes
+            set {_wait-2} to "10 minutes" parsed as timespan
+            wait {_wait-2}
+            if {dungeon.open} is true:
+                if {dungeon.cycle.id} is {_cycle}:
+                    set {dungeon.current.border.radius} to 50
+                    broadcast "&8[&4Dungeon&8] &c&lThe border is closing fast! &eRadius: 50 blocks"
+                    broadcast "&8[&4Dungeon&8] &cMove toward the center now!"
+
+            # Stage 3 — Final shrink after 20 more minutes
+            set {_wait-3} to "20 minutes" parsed as timespan
+            wait {_wait-3}
+            if {dungeon.open} is true:
+                if {dungeon.cycle.id} is {_cycle}:
+                    set {dungeon.current.border.radius} to 25
+                    broadcast "&8[&4Dungeon&8] &4&l⚠ FINAL ZONE! &cRadius: 25 blocks!"
+                    broadcast "&8[&4Dungeon&8] &4&lGet to the center or die!"
+
+            # Spawn emergency exit portal at center after shrink completes
+            if {dungeon.open} is true:
+                if {dungeon.cycle.id} is {_cycle}:
+                    set {dungeon.emergency.portal} to true
+                    set block at location(0, {@maze-floor-y} + 1, 0, world "{@dungeon-world}") to nether portal
+                    set block at location(0, {@maze-floor-y} + 2, 0, world "{@dungeon-world}") to nether portal
+                    set block at location(0, {@maze-floor-y} + 3, 0, world "{@dungeon-world}") to nether portal
+                    broadcast "&8[&4Dungeon&8] &6&lEMERGENCY EXIT portal spawned at the center! &e(0, 0)"
+                    broadcast "&8[&4Dungeon&8] &c&l5 MINUTES REMAINING!"
+
+# Start dungeon cycle timer
+function startDungeonCycle():
+    wait {@dungeon-reset-timer}
+    resetDungeon()
+
+# Main dungeon reset
+function resetDungeon():
+    set {dungeon.open} to false
+    set {dungeon.border.shrunk} to false
+    set {dungeon.current.border.radius} to 138
+
+    # Eject remaining players
+    if size of {dungeon.players::*} > 0:
+        broadcast "&8[&4Dungeon&8] &cDungeon resetting! Players ejected in 10 seconds!"
+        wait 10 seconds
+        loop {dungeon.players::*}:
+            forceEjectPlayer(loop-value)
+        wait 3 seconds
+
+    broadcast "&8[&4Dungeon&8] &7The dungeon is being rebuilt... Please wait."
+    removeEntryPortal()
+    removeExitPortal()
+
+    # Unbuild old maze and reload empty layout from backup
+    # World border reset handled per-player on exit
+    execute console command "maze unbuild"
+    wait 3 seconds
+    execute console command "maze load dungeon_layout"
+    wait 3 seconds
+
+    # =============================================
+    # RANDOMIZE ALL MAZE SETTINGS
+    # =============================================
+
+    # Random wall height (5 to 12)
+    set {_wallheight} to a random integer between 5 and 12
+
+    # Random path width (3 to 7)
+    set {_pathwidth} to a random integer between 3 and 7
+
+    # Random curliness (1 to 10)
+    set {_curliness} to a random integer between 1 and 10
+
+    # Random room count (5 to 15)
+    set {_roomcount} to a random integer between 5 and 15
+
+    # Random room size (8 to 18)
+    set {_roomsize} to a random integer between 8 and 18
+
+    # Random wall width (1 to 3)
+    set {_wallwidth} to a random integer between 1 and 3
+
+    # Random roof width (1 to 3)
+    set {_roofwidth} to a random integer between 1 and 3
+
+    # Apply randomized settings
+    execute console command "maze setting wallheight %{_wallheight}%"
+    wait 1 second
+    execute console command "maze setting pathwidth %{_pathwidth}%"
+    wait 1 second
+    execute console command "maze setting curliness %{_curliness}%"
+    wait 1 second
+    execute console command "maze setting roomcount %{_roomcount}%"
+    wait 1 second
+    execute console command "maze setting roomsize %{_roomsize}%"
+    wait 1 second
+    execute console command "maze setting wallwidth %{_wallwidth}%"
+    wait 1 second
+    execute console command "maze setting roofwidth %{_roofwidth}%"
+    wait 1 second
+    execute console command "maze setting seed 0"
+    wait 1 second
+
+    # =============================================
+    # RANDOMIZE MAZE STYLE (5 styles)
+    # =============================================
+    set {_style} to a random integer between 1 and 5
+
+    if {_style} is 1:
+        set {_style-name} to "Classic Stone Dungeon"
+        set {_walls} to "7*stone 3*mossy_cobblestone"
+        set {_floor} to "5*stone 3*gravel 2*mossy_cobblestone"
+        set {_roof} to "6*stone 2*mossy_cobblestone 1*glowstone 1*shroomlight"
+
+    else if {_style} is 2:
+        set {_style-name} to "Ancient Ruins"
+        set {_walls} to "5*stone_bricks 3*cracked_stone_bricks 2*mossy_stone_bricks"
+        set {_floor} to "5*stone_bricks 3*cracked_stone_bricks 2*gravel"
+        set {_roof} to "6*stone_bricks 2*cracked_stone_bricks 1*sea_lantern 1*glowstone"
+
+    else if {_style} is 3:
+        set {_style-name} to "Mossy Cave"
+        set {_walls} to "6*cobblestone 3*mossy_cobblestone 1*stone"
+        set {_floor} to "4*stone 3*mossy_cobblestone 2*gravel 1*dirt"
+        set {_roof} to "5*cobblestone 3*mossy_cobblestone 1*shroomlight 1*glowstone"
+
+    else if {_style} is 4:
+        set {_style-name} to "Nether Fortress"
+        set {_walls} to "6*nether_bricks 3*cracked_nether_bricks 1*magma_block"
+        set {_floor} to "5*nether_bricks 3*soul_sand 2*magma_block"
+        set {_roof} to "7*nether_bricks 2*cracked_nether_bricks 1*glowstone"
+
+    else if {_style} is 5:
+        set {_style-name} to "Deep Dark"
+        set {_walls} to "6*deepslate_bricks 3*cracked_deepslate_bricks 1*sculk"
+        set {_floor} to "5*deepslate_bricks 3*sculk 2*deepslate_tiles"
+        set {_roof} to "6*deepslate_bricks 2*sculk 1*shroomlight 1*sea_lantern"
+
+    # Build walls
+    execute console command "maze build %{_walls}%"
+    wait 25 seconds
+
+    # Build floor
+    execute console command "maze build -floor %{_floor}%"
+    wait 10 seconds
+
+    # Build roof
+    execute console command "maze build -roof %{_roof}%"
+    wait 25 seconds
+
+    # Remove old loot chests
+    execute console command "maze loot remove"
+    wait 2 seconds
+
+    # Spawn new loot chests inside maze
+    execute console command "maze loot spawn 10*common_chest -hallways"
+    wait 2 seconds
+    execute console command "maze loot spawn 5*rare_chest -deadends"
+    wait 2 seconds
+    execute console command "maze loot spawn 1*boss_chest -rooms"
+    wait 2 seconds
+
+    # Respawn all loot chests so they are full
+    execute console command "lc respawnall"
+    wait 2 seconds
+
+    # Spawn fixed exit portal
+    spawnExitPortal()
+
+    # Open entry portal
+    createEntryPortal()
+
+    # Mark dungeon open
+    set {dungeon.open} to true
+    set {dungeon.random.portal.spawned} to false
+    set {dungeon.border.shrunk} to false
+    set {dungeon.current.border.radius} to 138
+    # World border set per-player on dungeon entry
+
+    # Announce dungeon open
+    broadcast "&8[&4Dungeon&8] &aThe dungeon is now open!"
+    broadcast "&8[&4Dungeon&8] &7Style: &e%{_style-name}%"
+    broadcast "&8[&4Dungeon&8] &7Wall Height: &f%{_wallheight}% &7| Path Width: &f%{_pathwidth}% &7| Curliness: &f%{_curliness}%"
+    broadcast "&8[&4Dungeon&8] &7Rooms: &f%{_roomcount}% &7| Room Size: &f%{_roomsize}%"
+    broadcast "&8[&4Dungeon&8] &eFixed exit: &fNorth wall (-7, -60, -138)"
+    broadcast "&8[&4Dungeon&8] &7A random exit will appear somewhere between 5-10 minutes in..."
+    broadcast "&8[&4Dungeon&8] &cYou have 30 minutes once inside. Survive or lose everything!"
+
+    # Start all timers simultaneously
+    set {dungeon.cycle.id} to {dungeon.cycle.id} + 1
+    set {_cycle-id} to {dungeon.cycle.id}
+    spawnRandomPortalDelayed({_cycle-id})
+    shrinkBorderDelayed({_cycle-id})
+    startDungeonCycle()
+
+# Create entry portal in farming world
+function createEntryPortal():
+    set block at location({@portal-x}, {@portal-y}, {@portal-z}, world "{@portal-world}") to nether portal
+    set block at location({@portal-x}, {@portal-y} + 1, {@portal-z}, world "{@portal-world}") to nether portal
+    set block at location({@portal-x}, {@portal-y} + 2, {@portal-z}, world "{@portal-world}") to nether portal
+
+# Remove entry portal
+function removeEntryPortal():
+    set block at location({@portal-x}, {@portal-y}, {@portal-z}, world "{@portal-world}") to air
+    set block at location({@portal-x}, {@portal-y} + 1, {@portal-z}, world "{@portal-world}") to air
+    set block at location({@portal-x}, {@portal-y} + 2, {@portal-z}, world "{@portal-world}") to air
+
+# Spawn fixed exit portal only
+function spawnExitPortal():
+    set {dungeon.exit.fixed.x} to -7
+    set {dungeon.exit.fixed.y} to -60
+    set {dungeon.exit.fixed.z} to -138
+    set block at location({dungeon.exit.fixed.x}, {dungeon.exit.fixed.y} + 1, {dungeon.exit.fixed.z}, world "{@dungeon-world}") to nether portal
+    set block at location({dungeon.exit.fixed.x}, {dungeon.exit.fixed.y} + 2, {dungeon.exit.fixed.z}, world "{@dungeon-world}") to nether portal
+    set block at location({dungeon.exit.fixed.x}, {dungeon.exit.fixed.y} + 3, {dungeon.exit.fixed.z}, world "{@dungeon-world}") to nether portal
+
+# Remove both exit portals
+function removeExitPortal():
+    # Remove fixed portal
+    set block at location(-7, -59, -138, world "{@dungeon-world}") to air
+    set block at location(-7, -58, -138, world "{@dungeon-world}") to air
+    set block at location(-7, -57, -138, world "{@dungeon-world}") to air
+    # Only remove random portal if it spawned
+    if {dungeon.random.portal.spawned} is true:
+        set block at location({dungeon.exit.x}, {dungeon.exit.y} + 1, {dungeon.exit.z}, world "{@dungeon-world}") to air
+        set block at location({dungeon.exit.x}, {dungeon.exit.y} + 2, {dungeon.exit.z}, world "{@dungeon-world}") to air
+        set block at location({dungeon.exit.x}, {dungeon.exit.y} + 3, {dungeon.exit.z}, world "{@dungeon-world}") to air
+    set {dungeon.random.portal.spawned} to false
+    # Remove emergency portal if it spawned
+    if {dungeon.emergency.portal} is true:
+        set block at location(0, {@maze-floor-y} + 1, 0, world "{@dungeon-world}") to air
+        set block at location(0, {@maze-floor-y} + 2, 0, world "{@dungeon-world}") to air
+        set block at location(0, {@maze-floor-y} + 3, 0, world "{@dungeon-world}") to air
+    set {dungeon.emergency.portal} to false
+
+# Force eject player (lose items)
+function forceEjectPlayer(p: player):
+    if {dungeon.players::%uuid of {_p}%} is set:
+        send "&8[&4Dungeon&8] &cYou have been forcefully ejected! All items lost." to {_p}
+        clear inventory of {_p}
+        teleport {_p} to spawn of world "{@portal-world}"
+        delete {dungeon.players::%uuid of {_p}%}
+        delete {dungeon.timer::%uuid of {_p}%}
+        wait 1 second
+        
+
+# Teleport player into dungeon
+function enterDungeon(p: player):
+    set {_x} to a random integer between {@maze-min-x} and {@maze-max-x}
+    set {_z} to a random integer between {@maze-min-z} and {@maze-max-z}
+    set {_y} to {@maze-floor-y} + 1
+    teleport {_p} to location({_x}, {_y}, {_z}, world "{@dungeon-world}")
+    set {dungeon.players::%uuid of {_p}%} to {_p}
+    send "&8[&4Dungeon&8] &aYou entered the dungeon!" to {_p}
+    send "&8[&4Dungeon&8] &eFixed exit: &fNorth wall (-7, -60, -138)" to {_p}
+    send "&8[&4Dungeon&8] &7A random exit will appear in 5-10 minutes!" to {_p}
+    send "&8[&4Dungeon&8] &cYou have 30 minutes. Survive or lose everything!" to {_p}
+    set {dungeon.timer::%uuid of {_p}%} to true
+    wait {@player-time-limit}
+    if {dungeon.timer::%uuid of {_p}%} is true:
+        forceEjectPlayer({_p})
+
+# =============================================
+# BORDER PARTICLE VISUALIZER
+# =============================================
+
+# Draw red dust particles along damage zone border every 2 seconds
+every 2 seconds:
+    if {dungeon.open} is true:
+        # Only draw if players are in dungeon
+        loop all players:
+            if name of world of loop-player is "{@dungeon-world}":
+                set {_limit} to 138
+                if {dungeon.border.shrunk} is true:
+                    set {_limit} to {dungeon.current.border.radius}
+                set {_y} to {@maze-floor-y} + 2
+                set {_step} to 1
+                set {_neg-limit} to {_limit} * -1
+                set {_dust} to dustOption(red, 3)
+
+                # Draw north wall (z = -{_limit})
+                set {_x} to {_neg-limit}
+                while {_x} <= {_limit}:
+                    draw 1 of dust using {_dust} at location({_x}, {_y}, {_neg-limit}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_x}, {_y} + 1, {_neg-limit}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_x}, {_y} + 2, {_neg-limit}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_x}, {_y} + 3, {_neg-limit}, world "{@dungeon-world}")
+                    add {_step} to {_x}
+
+                # Draw south wall (z = +{_limit})
+                set {_x} to {_neg-limit}
+                while {_x} <= {_limit}:
+                    draw 1 of dust using {_dust} at location({_x}, {_y}, {_limit}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_x}, {_y} + 1, {_limit}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_x}, {_y} + 2, {_limit}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_x}, {_y} + 3, {_limit}, world "{@dungeon-world}")
+                    add {_step} to {_x}
+
+                # Draw west wall (x = -{_limit})
+                set {_z} to {_neg-limit}
+                while {_z} <= {_limit}:
+                    draw 1 of dust using {_dust} at location({_neg-limit}, {_y}, {_z}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_neg-limit}, {_y} + 1, {_z}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_neg-limit}, {_y} + 2, {_z}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_neg-limit}, {_y} + 3, {_z}, world "{@dungeon-world}")
+                    add {_step} to {_z}
+
+                # Draw east wall (x = +{_limit})
+                set {_z} to {_neg-limit}
+                while {_z} <= {_limit}:
+                    draw 1 of dust using {_dust} at location({_limit}, {_y}, {_z}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_limit}, {_y} + 1, {_z}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_limit}, {_y} + 2, {_z}, world "{@dungeon-world}")
+                    draw 1 of dust using {_dust} at location({_limit}, {_y} + 3, {_z}, world "{@dungeon-world}")
+                    add {_step} to {_z}
+
+                stop loop
+
+# =============================================
+# BORDER DAMAGE LOOP
+# =============================================
+
+# Damage players outside border every second (DEBUG - no registration check)
+every 1 second:
+    loop all players:
+        if name of world of loop-player is "{@dungeon-world}":
+            set {_px} to x-coordinate of loop-player
+            set {_pz} to z-coordinate of loop-player
+            set {_limit} to 138
+            if {dungeon.border.shrunk} is true:
+                set {_limit} to {dungeon.current.border.radius}
+            # Check if outside bounds
+            set {_outside} to false
+            if {_px} > {_limit}:
+                set {_outside} to true
+            if {_px} < ({_limit} * -1):
+                set {_outside} to true
+            if {_pz} > {_limit}:
+                set {_outside} to true
+            if {_pz} < ({_limit} * -1):
+                set {_outside} to true
+            # Deal damage and warn if outside
+            if {_outside} is true:
+                damage loop-player by 1
+                send action bar "&c⚠ You are outside the border! Get back inside!" to loop-player
+
+# =============================================
+# EVENTS
+# =============================================
+
+# Player enters entry portal in farming world
+on player teleport:
+    if name of world of player is "{@portal-world}":
+        if teleport cause is nether portal:
+            cancel event
+            if {dungeon.open} is true:
+                set {_partner} to {dungeon.team.partner::%uuid of player%}
+                if {_partner} is set:
+                    if {_partner} is online:
+                        enterDungeon(player)
+                        enterDungeon({_partner})
+                    else:
+                        enterDungeon(player)
+                else:
+                    enterDungeon(player)
+            else:
+                send "&8[&4Dungeon&8] &cThe dungeon is currently closed!" to player
+
+# Player enters exit portal in dungeon world
+on player teleport:
+    if name of world of player is "{@dungeon-world}":
+        if teleport cause is nether portal:
+            cancel event
+            set {_px} to x-coordinate of player
+            set {_pz} to z-coordinate of player
+
+            # Check random exit portal distance
+            set {_near-random} to false
+            if {dungeon.random.portal.spawned} is true:
+                set {_dist-x} to {_px} - {dungeon.exit.x}
+                if {_dist-x} < 0:
+                    set {_dist-x} to {_dist-x} * -1
+                set {_dist-z} to {_pz} - {dungeon.exit.z}
+                if {_dist-z} < 0:
+                    set {_dist-z} to {_dist-z} * -1
+                if {_dist-x} <= 2:
+                    if {_dist-z} <= 2:
+                        set {_near-random} to true
+            # Check emergency exit portal at center
+            set {_near-emergency} to false
+            if {dungeon.emergency.portal} is true:
+                set {_dist-ex} to {_px} - 0
+                if {_dist-ex} < 0:
+                    set {_dist-ex} to {_dist-ex} * -1
+                set {_dist-ez} to {_pz} - 0
+                if {_dist-ez} < 0:
+                    set {_dist-ez} to {_dist-ez} * -1
+                if {_dist-ex} <= 2:
+                    if {_dist-ez} <= 2:
+                        set {_near-emergency} to true
+
+            # Check fixed exit portal distance
+            set {_dist-fx} to {_px} - (-7)
+            if {_dist-fx} < 0:
+                set {_dist-fx} to {_dist-fx} * -1
+            set {_dist-fz} to {_pz} - (-138)
+            if {_dist-fz} < 0:
+                set {_dist-fz} to {_dist-fz} * -1
+            set {_near-fixed} to false
+            if {_dist-fx} <= 2:
+                if {_dist-fz} <= 2:
+                    set {_near-fixed} to true
+
+            # Safe exit if near any portal
+            if {_near-random} is true:
+                send "&8[&4Dungeon&8] &aYou escaped via the random exit! Items kept." to player
+                teleport player to spawn of world "{@portal-world}"
+                wait 1 second
+                
+                delete {dungeon.players::%uuid of player%}
+                delete {dungeon.timer::%uuid of player%}
+            else if {_near-fixed} is true:
+                send "&8[&4Dungeon&8] &aYou escaped via the fixed exit! Items kept." to player
+                teleport player to spawn of world "{@portal-world}"
+                wait 1 second
+                
+                delete {dungeon.players::%uuid of player%}
+                delete {dungeon.timer::%uuid of player%}
+            else if {_near-emergency} is true:
+                send "&8[&4Dungeon&8] &6You escaped via the emergency exit! Items kept." to player
+                teleport player to spawn of world "{@portal-world}"
+                wait 1 second
+                
+                delete {dungeon.players::%uuid of player%}
+                delete {dungeon.timer::%uuid of player%}
+            else:
+                send "&cThere is no way out here!" to player
+
+# Player dies in dungeon
+on death of player:
+    if name of world of victim is "{@dungeon-world}":
+        clear drops
+        send "&8[&4Dungeon&8] &cYou died! All items lost." to victim
+        set {dungeon.respawn::%uuid of victim%} to true
+        delete {dungeon.players::%uuid of victim%}
+        delete {dungeon.timer::%uuid of victim%}
+
+on respawn:
+    if {dungeon.respawn::%uuid of player%} is set:
+        delete {dungeon.respawn::%uuid of player%}
+        clear inventory of player
+        set {dungeon.bypassing::%uuid of player%} to true
+        teleport player to spawn of world "{@portal-world}"
+        delete {dungeon.bypassing::%uuid of player%}
+        wait 1 second
+        
+
+# Prevent leaving dungeon any other way
+on player teleport:
+    if name of world of player is "{@dungeon-world}":
+        if teleport cause is not nether portal:
+            if {dungeon.players::%uuid of player%} is set:
+                if {dungeon.bypassing::%uuid of player%} is not set:
+                    cancel event
+                    send "&cYou cannot leave the dungeon this way!" to player
+
+# =============================================
+# COMMANDS
+# =============================================
+
+# Register dungeon team
+command /dungeonteam <player>:
+    trigger:
+        if player is arg-1:
+            send "&cYou cannot team with yourself!" to player
+            stop
+        if {dungeon.players::%uuid of player%} is set:
+            send "&cYou cannot change teams while inside the dungeon!" to player
+            stop
+        set {dungeon.team.partner::%uuid of player%} to arg-1
+        set {dungeon.team.partner::%uuid of arg-1%} to player
+        send "&8[&4Dungeon&8] &aYou are now teamed with &e%arg-1%&a!" to player
+        send "&8[&4Dungeon&8] &aYou are now teamed with &e%player%&a!" to arg-1
+
+# Leave dungeon team
+command /dungeonleave:
+    trigger:
+        if {dungeon.players::%uuid of player%} is set:
+            send "&cYou cannot leave your team while inside the dungeon!" to player
+            stop
+        set {_partner} to {dungeon.team.partner::%uuid of player%}
+        if {_partner} is set:
+            delete {dungeon.team.partner::%uuid of player%}
+            delete {dungeon.team.partner::%uuid of {_partner}%}
+            send "&8[&4Dungeon&8] &cTeam disbanded." to player
+            send "&8[&4Dungeon&8] &cYour team has been disbanded." to {_partner}
+        else:
+            send "&cYou are not in a team!" to player
+
+# Check dungeon status
+command /dungeonstatus:
+    trigger:
+        if {dungeon.open} is true:
+            send "&8[&4Dungeon&8] &aStatus: &2OPEN" to player
+            send "&8[&4Dungeon&8] &ePlayers inside: &f%size of {dungeon.players::*}%" to player
+            send "&8[&4Dungeon&8] &eFixed exit: &fNorth wall (-7, -60, -138)" to player
+            if {dungeon.random.portal.spawned} is true:
+                send "&8[&4Dungeon&8] &eRandom exit: &fX: %{dungeon.exit.x}% Z: %{dungeon.exit.z}%" to player
+            else:
+                send "&8[&4Dungeon&8] &7Random exit: &fnot spawned yet" to player
+            if {dungeon.emergency.portal} is true:
+                send "&8[&4Dungeon&8] &6Emergency exit: &fCenter (0, 0)" to player
+        else:
+            send "&8[&4Dungeon&8] &cStatus: &4CLOSED" to player
+
+# Admin manual reset
+command /dungeonreset:
+    permission: op
+    trigger:
+        broadcast "&8[&4Dungeon&8] &cAdmin triggered manual dungeon reset!"
+        resetDungeon()
+
+# Admin force eject specific player
+command /dungeoneject <player>:
+    permission: op
+    trigger:
+        if {dungeon.players::%uuid of arg-1%} is set:
+            forceEjectPlayer(arg-1)
+            send "&aEjected %arg-1% from dungeon." to player
+        else:
+            send "&c%arg-1% is not in the dungeon." to player

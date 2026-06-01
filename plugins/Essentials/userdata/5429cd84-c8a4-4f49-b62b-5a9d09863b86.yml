@@ -1,0 +1,38 @@
+teleportenabled: true
+teleportauto: false
+godmode: false
+muted: false
+jailed: false
+ip-address: fd9a:fd3c:25cc:fbe:d919:da0d:3af9:a31a
+afk: false
+socialspy: false
+npc: false
+powertoolsenabled: true
+accepting-pay: true
+baltop-exempt: false
+timestamps:
+  lastteleport: 0
+  lastheal: 0
+  mute: 0
+  jail: 0
+  onlinejail: 0
+  logout: 1780262077661
+  login: 1780259267637
+money: '0'
+last-account-name: Yummy_Tuna
+logoutlocation:
+  world: 4a3e9d87-fa60-45a2-b596-ef3d0d0481a7
+  world-name: dungeon
+  x: -78.29224965359454
+  y: -43.56768869195823
+  z: 66.5155757340346
+  yaw: -110.92047119140625
+  pitch: 30.361038208007812
+lastlocation:
+  world: 4a3e9d87-fa60-45a2-b596-ef3d0d0481a7
+  world-name: dungeon
+  x: -49.136535887961166
+  y: -57.75759024438287
+  z: 73.85337956266397
+  yaw: 37.572998046875
+  pitch: 20.69908905029297

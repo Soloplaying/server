@@ -1,0 +1,7 @@
+wand-item: wooden_shovel
+hover-clicking:
+  enabled: true
+  range: 50
+blocks-placed-per-tick: -1
+autosave:
+  enabled: true

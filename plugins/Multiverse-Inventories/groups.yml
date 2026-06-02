@@ -6,5 +6,17 @@ groups:
   default:
     worlds:
     - world
+    - dungeon
     shares:
     - all
+  inv1:
+    worlds:
+    - world
+    - dungeon
+    shares:
+    - inventory_contents
+    - armor_contents
+    - ender_chest
+    - off_hand
+    - economy
+    - hit_points

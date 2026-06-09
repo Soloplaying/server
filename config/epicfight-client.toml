@@ -21,6 +21,7 @@
 	max_hit_projectiles = 30
 	no_mining_in_combat = true
 	battle_autoswitch_items = []
+	firstPersonRenderEnabled = true
 
 	[ingame.ui]
 		#Allowed Values: LEFT, RIGHT, CENTER

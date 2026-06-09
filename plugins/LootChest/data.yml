@@ -22,7 +22,7 @@ chests:
       z: -62.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577247
+    lastreset: 1780718285535
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -82,7 +82,7 @@ chests:
       z: -59.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577248
+    lastreset: 1780718890543
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -110,7 +110,7 @@ chests:
       z: -57.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577247
+    lastreset: 1780718840538
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -119,6 +119,347 @@ chests:
         ==: org.bukkit.inventory.ItemStack
         v: 3465
         type: GOLD_INGOT
+  common_chest-1:
+    chance:
+      '0': 100
+      '1': 100
+      '2': 100
+      '3': 100
+      '4': 100
+    fall: true
+    type: CHEST
+    respawn_cmd: true
+    respawn_natural: true
+    take_message: true
+    direction: SOUTH
+    holo: common_chest
+    time: 30
+    protectionTime: 0
+    position:
+      world: dungeon
+      x: 37.0
+      y: -59.0
+      z: 38.0
+      pitch: 0.0
+      yaw: 0.0
+    lastreset: 1780718285538
+    particle: FLAME
+    randomradius: 0
+    maxFilledSlots: 0
+    inventory:
+      '0':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRON_INGOT
+      '1':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yXLTQ7CIBAF4IeosdzBi7g0ceG6C5eElmkkxU5lqKm3F+ru/eQzgIG5t1fbzhSjaDQvt/4zAKVKXyTf3kuY0WDvXXamHhqHMHlaS8YJu+BxDoknsVJtxzzKJbmv5cEOiSUrHCP3I/kqI30oFqihYDbweNK2/ACLJOdQkAAAAA==
+      '2':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yVMSw6CMBB9FTUyN/AqLk1cuGbhsinMJDaMFBgwHN8W8zbvTwCBns3dN6OoWoX6E7Y/B+Bc1qstj2mNI2ocOSyBSlDhFAeWLXNccIiMa5zTYN7Ktk2pt1voIvs0tw5nTV0vXFYqX9HykEF7+fWW3fkBIdsDU4wAAAA=
+      '3':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWMzQ7CIBCEB6vG8hQ+h0cTD5578Eho2ZRNV6hCTR9faDOX+ck3GtDQz+5uuplEUoP2bdfdA1Cq5CXlx2fhGS2Ozmar69DgxMHRWjwuOLDDlb8xJJMq28c4pdvgLQcjPPocOIwKZ4nDRK7CQj+SelSkN+blaWv+WopIEpMAAAA=
+      '4':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWLyw6CMBBFbwWN9A/8FZcmLlyzcEmKHeOEkUGmGD7fFnfnPo4HPPytvXTtRCJWoXmH9c8AnMt5sXT9LDyhQR1DCr4MFfY8Rloz44gdR5x41tE6K26vOtj5yTP1KsnhIPoYKBZL6EuSpRoOfjvfX7Q1Pzdunc6MAAAA
+  common_chest-3:
+    fall: true
+    type: CHEST
+    respawn_cmd: true
+    respawn_natural: true
+    take_message: true
+    direction: EAST
+    holo: common_chest
+    time: 10
+    protectionTime: 0
+    position:
+      world: dungeon
+      x: -39.0
+      y: -59.0
+      z: 100.0
+      pitch: 0.0
+      yaw: 0.0
+    lastreset: 1780718890544
+    particle: FLAME
+    randomradius: 0
+    maxFilledSlots: 0
+  common_chest-2:
+    chance:
+      '0': 100
+      '1': 100
+      '2': 100
+      '3': 100
+      '4': 100
+    fall: true
+    type: CHEST
+    respawn_cmd: true
+    respawn_natural: true
+    take_message: true
+    direction: NORTH
+    holo: common_chest
+    time: 30
+    protectionTime: 0
+    position:
+      world: dungeon
+      x: -3.0
+      y: -59.0
+      z: 127.0
+      pitch: 0.0
+      yaw: 0.0
+    lastreset: 1780718285536
+    particle: FLAME
+    randomradius: 0
+    maxFilledSlots: 0
+    inventory:
+      '0':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRON_INGOT
+      '1':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yXLTQ7CIBAF4IeosdzBi7g0ceG6C5eElmkkxU5lqKm3F+ru/eQzgIG5t1fbzhSjaDQvt/4zAKVKXyTf3kuY0WDvXXamHhqHMHlaS8YJu+BxDoknsVJtxzzKJbmv5cEOiSUrHCP3I/kqI30oFqihYDbweNK2/ACLJOdQkAAAAA==
+      '2':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yVMSw6CMBB9FTUyN/AqLk1cuGbhsinMJDaMFBgwHN8W8zbvTwCBns3dN6OoWoX6E7Y/B+Bc1qstj2mNI2ocOSyBSlDhFAeWLXNccIiMa5zTYN7Ktk2pt1voIvs0tw5nTV0vXFYqX9HykEF7+fWW3fkBIdsDU4wAAAA=
+      '3':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWMzQ7CIBCEB6vG8hQ+h0cTD5578Eho2ZRNV6hCTR9faDOX+ck3GtDQz+5uuplEUoP2bdfdA1Cq5CXlx2fhGS2Ozmar69DgxMHRWjwuOLDDlb8xJJMq28c4pdvgLQcjPPocOIwKZ4nDRK7CQj+SelSkN+blaWv+WopIEpMAAAA=
+      '4':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWLyw6CMBBFbwWN9A/8FZcmLlyzcEmKHeOEkUGmGD7fFnfnPo4HPPytvXTtRCJWoXmH9c8AnMt5sXT9LDyhQR1DCr4MFfY8Rloz44gdR5x41tE6K26vOtj5yTP1KsnhIPoYKBZL6EuSpRoOfjvfX7Q1Pzdunc6MAAAA
+  common_chest-13:
+    chance:
+      '0': 100
+      '1': 100
+      '2': 100
+      '3': 100
+      '4': 100
+    fall: true
+    type: CHEST
+    respawn_cmd: true
+    respawn_natural: true
+    take_message: true
+    direction: NORTH
+    holo: common_chest
+    time: 30
+    protectionTime: 0
+    position:
+      world: dungeon
+      x: 57.0
+      y: -59.0
+      z: -25.0
+      pitch: 0.0
+      yaw: 0.0
+    lastreset: 1780718285533
+    particle: FLAME
+    randomradius: 0
+    maxFilledSlots: 0
+    inventory:
+      '0':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRON_INGOT
+      '1':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yXLTQ7CIBAF4IeosdzBi7g0ceG6C5eElmkkxU5lqKm3F+ru/eQzgIG5t1fbzhSjaDQvt/4zAKVKXyTf3kuY0WDvXXamHhqHMHlaS8YJu+BxDoknsVJtxzzKJbmv5cEOiSUrHCP3I/kqI30oFqihYDbweNK2/ACLJOdQkAAAAA==
+      '2':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yVMSw6CMBB9FTUyN/AqLk1cuGbhsinMJDaMFBgwHN8W8zbvTwCBns3dN6OoWoX6E7Y/B+Bc1qstj2mNI2ocOSyBSlDhFAeWLXNccIiMa5zTYN7Ktk2pt1voIvs0tw5nTV0vXFYqX9HykEF7+fWW3fkBIdsDU4wAAAA=
+      '3':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWMzQ7CIBCEB6vG8hQ+h0cTD5578Eho2ZRNV6hCTR9faDOX+ck3GtDQz+5uuplEUoP2bdfdA1Cq5CXlx2fhGS2Ozmar69DgxMHRWjwuOLDDlb8xJJMq28c4pdvgLQcjPPocOIwKZ4nDRK7CQj+SelSkN+blaWv+WopIEpMAAAA=
+      '4':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWLyw6CMBBFbwWN9A/8FZcmLlyzcEmKHeOEkUGmGD7fFnfnPo4HPPytvXTtRCJWoXmH9c8AnMt5sXT9LDyhQR1DCr4MFfY8Rloz44gdR5x41tE6K26vOtj5yTP1KsnhIPoYKBZL6EuSpRoOfjvfX7Q1Pzdunc6MAAAA
+  common_chest-11:
+    chance:
+      '0': 100
+      '1': 100
+      '2': 100
+      '3': 100
+      '4': 100
+    fall: true
+    type: CHEST
+    respawn_cmd: true
+    respawn_natural: true
+    take_message: true
+    direction: SOUTH
+    holo: common_chest
+    time: 30
+    protectionTime: 0
+    position:
+      world: dungeon
+      x: -122.0
+      y: -59.0
+      z: 7.0
+      pitch: 0.0
+      yaw: 0.0
+    lastreset: 1780718285536
+    particle: FLAME
+    randomradius: 0
+    maxFilledSlots: 0
+    inventory:
+      '0':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRON_INGOT
+      '1':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yXLTQ7CIBAF4IeosdzBi7g0ceG6C5eElmkkxU5lqKm3F+ru/eQzgIG5t1fbzhSjaDQvt/4zAKVKXyTf3kuY0WDvXXamHhqHMHlaS8YJu+BxDoknsVJtxzzKJbmv5cEOiSUrHCP3I/kqI30oFqihYDbweNK2/ACLJOdQkAAAAA==
+      '2':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yVMSw6CMBB9FTUyN/AqLk1cuGbhsinMJDaMFBgwHN8W8zbvTwCBns3dN6OoWoX6E7Y/B+Bc1qstj2mNI2ocOSyBSlDhFAeWLXNccIiMa5zTYN7Ktk2pt1voIvs0tw5nTV0vXFYqX9HykEF7+fWW3fkBIdsDU4wAAAA=
+      '3':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWMzQ7CIBCEB6vG8hQ+h0cTD5578Eho2ZRNV6hCTR9faDOX+ck3GtDQz+5uuplEUoP2bdfdA1Cq5CXlx2fhGS2Ozmar69DgxMHRWjwuOLDDlb8xJJMq28c4pdvgLQcjPPocOIwKZ4nDRK7CQj+SelSkN+blaWv+WopIEpMAAAA=
+      '4':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWLyw6CMBBFbwWN9A/8FZcmLlyzcEmKHeOEkUGmGD7fFnfnPo4HPPytvXTtRCJWoXmH9c8AnMt5sXT9LDyhQR1DCr4MFfY8Rloz44gdR5x41tE6K26vOtj5yTP1KsnhIPoYKBZL6EuSpRoOfjvfX7Q1Pzdunc6MAAAA
+  common_chest-12:
+    chance:
+      '0': 100
+      '1': 100
+      '2': 100
+      '3': 100
+      '4': 100
+    fall: true
+    type: CHEST
+    respawn_cmd: true
+    respawn_natural: true
+    take_message: true
+    direction: WEST
+    holo: common_chest
+    time: 30
+    protectionTime: 0
+    position:
+      world: dungeon
+      x: -46.0
+      y: -59.0
+      z: -78.0
+      pitch: 0.0
+      yaw: 0.0
+    lastreset: 1780718285534
+    particle: FLAME
+    randomradius: 0
+    maxFilledSlots: 0
+    inventory:
+      '0':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRON_INGOT
+      '1':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yXLTQ7CIBAF4IeosdzBi7g0ceG6C5eElmkkxU5lqKm3F+ru/eQzgIG5t1fbzhSjaDQvt/4zAKVKXyTf3kuY0WDvXXamHhqHMHlaS8YJu+BxDoknsVJtxzzKJbmv5cEOiSUrHCP3I/kqI30oFqihYDbweNK2/ACLJOdQkAAAAA==
+      '2':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yVMSw6CMBB9FTUyN/AqLk1cuGbhsinMJDaMFBgwHN8W8zbvTwCBns3dN6OoWoX6E7Y/B+Bc1qstj2mNI2ocOSyBSlDhFAeWLXNccIiMa5zTYN7Ktk2pt1voIvs0tw5nTV0vXFYqX9HykEF7+fWW3fkBIdsDU4wAAAA=
+      '3':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWMzQ7CIBCEB6vG8hQ+h0cTD5578Eho2ZRNV6hCTR9faDOX+ck3GtDQz+5uuplEUoP2bdfdA1Cq5CXlx2fhGS2Ozmar69DgxMHRWjwuOLDDlb8xJJMq28c4pdvgLQcjPPocOIwKZ4nDRK7CQj+SelSkN+blaWv+WopIEpMAAAA=
+      '4':
+        ==: org.bukkit.inventory.ItemStack
+        v: 3465
+        type: IRONS_SPELLBOOKS_SCROLL
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          internal: H4sIAAAAAAAA/yWLyw6CMBBFbwWN9A/8FZcmLlyzcEmKHeOEkUGmGD7fFnfnPo4HPPytvXTtRCJWoXmH9c8AnMt5sXT9LDyhQR1DCr4MFfY8Rloz44gdR5x41tE6K26vOtj5yTP1KsnhIPoYKBZL6EuSpRoOfjvfX7Q1Pzdunc6MAAAA
   common_chest-10:
     chance:
       '0': 100
@@ -137,12 +478,12 @@ chests:
     protectionTime: 0
     position:
       world: dungeon
-      x: 86.0
-      y: -60.0
-      z: 100.0
+      x: 62.0
+      y: -59.0
+      z: -54.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577239
+    lastreset: 1780718285534
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -195,18 +536,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: WEST
+    direction: EAST
     holo: common_chest
     time: 30
     protectionTime: 0
     position:
       world: dungeon
-      x: -64.0
-      y: -60.0
-      z: 96.0
+      x: 4.0
+      y: -59.0
+      z: -33.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577240
+    lastreset: 1780718285534
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -259,18 +600,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: EAST
+    direction: WEST
     holo: common_chest
     time: 30
     protectionTime: 0
     position:
       world: dungeon
-      x: 94.0
-      y: -60.0
-      z: 75.0
+      x: 56.0
+      y: -59.0
+      z: -78.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577245
+    lastreset: 1780718285538
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -323,18 +664,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: WEST
+    direction: NORTH
     holo: common_chest
     time: 30
     protectionTime: 0
     position:
       world: dungeon
-      x: -70.0
-      y: -60.0
-      z: 109.0
+      x: 75.0
+      y: -59.0
+      z: -67.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577247
+    lastreset: 1780718285538
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -387,18 +728,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: NORTH
+    direction: WEST
     holo: common_chest
     time: 30
     protectionTime: 0
     position:
       world: dungeon
-      x: -30.0
-      y: -60.0
-      z: 137.0
+      x: -70.0
+      y: -59.0
+      z: -91.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577241
+    lastreset: 1780718285535
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -451,18 +792,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: WEST
+    direction: SOUTH
     holo: common_chest
     time: 30
     protectionTime: 0
     position:
       world: dungeon
-      x: 14.0
-      y: -60.0
-      z: 42.0
+      x: -87.0
+      y: -59.0
+      z: 61.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577245
+    lastreset: 1780718285538
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -515,210 +856,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: WEST
-    holo: common_chest
-    time: 30
-    protectionTime: 0
-    position:
-      world: dungeon
-      x: -52.0
-      y: -60.0
-      z: 126.0
-      pitch: 0.0
-      yaw: 0.0
-    lastreset: 1780300577243
-    particle: FLAME
-    randomradius: 0
-    maxFilledSlots: 0
-    inventory:
-      '0':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRON_INGOT
-      '1':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yXLTQ7CIBAF4IeosdzBi7g0ceG6C5eElmkkxU5lqKm3F+ru/eQzgIG5t1fbzhSjaDQvt/4zAKVKXyTf3kuY0WDvXXamHhqHMHlaS8YJu+BxDoknsVJtxzzKJbmv5cEOiSUrHCP3I/kqI30oFqihYDbweNK2/ACLJOdQkAAAAA==
-      '2':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yVMSw6CMBB9FTUyN/AqLk1cuGbhsinMJDaMFBgwHN8W8zbvTwCBns3dN6OoWoX6E7Y/B+Bc1qstj2mNI2ocOSyBSlDhFAeWLXNccIiMa5zTYN7Ktk2pt1voIvs0tw5nTV0vXFYqX9HykEF7+fWW3fkBIdsDU4wAAAA=
-      '3':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yWMzQ7CIBCEB6vG8hQ+h0cTD5578Eho2ZRNV6hCTR9faDOX+ck3GtDQz+5uuplEUoP2bdfdA1Cq5CXlx2fhGS2Ozmar69DgxMHRWjwuOLDDlb8xJJMq28c4pdvgLQcjPPocOIwKZ4nDRK7CQj+SelSkN+blaWv+WopIEpMAAAA=
-      '4':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yWLyw6CMBBFbwWN9A/8FZcmLlyzcEmKHeOEkUGmGD7fFnfnPo4HPPytvXTtRCJWoXmH9c8AnMt5sXT9LDyhQR1DCr4MFfY8Rloz44gdR5x41tE6K26vOtj5yTP1KsnhIPoYKBZL6EuSpRoOfjvfX7Q1Pzdunc6MAAAA
-  common_chest-1:
-    chance:
-      '0': 100
-      '1': 100
-      '2': 100
-      '3': 100
-      '4': 100
-    fall: true
-    type: CHEST
-    respawn_cmd: true
-    respawn_natural: true
-    take_message: true
-    direction: NORTH
-    holo: common_chest
-    time: 30
-    protectionTime: 0
-    position:
-      world: dungeon
-      x: 8.0
-      y: -60.0
-      z: -121.0
-      pitch: 0.0
-      yaw: 0.0
-    lastreset: 1780300577248
-    particle: FLAME
-    randomradius: 0
-    maxFilledSlots: 0
-    inventory:
-      '0':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRON_INGOT
-      '1':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yXLTQ7CIBAF4IeosdzBi7g0ceG6C5eElmkkxU5lqKm3F+ru/eQzgIG5t1fbzhSjaDQvt/4zAKVKXyTf3kuY0WDvXXamHhqHMHlaS8YJu+BxDoknsVJtxzzKJbmv5cEOiSUrHCP3I/kqI30oFqihYDbweNK2/ACLJOdQkAAAAA==
-      '2':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yVMSw6CMBB9FTUyN/AqLk1cuGbhsinMJDaMFBgwHN8W8zbvTwCBns3dN6OoWoX6E7Y/B+Bc1qstj2mNI2ocOSyBSlDhFAeWLXNccIiMa5zTYN7Ktk2pt1voIvs0tw5nTV0vXFYqX9HykEF7+fWW3fkBIdsDU4wAAAA=
-      '3':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yWMzQ7CIBCEB6vG8hQ+h0cTD5578Eho2ZRNV6hCTR9faDOX+ck3GtDQz+5uuplEUoP2bdfdA1Cq5CXlx2fhGS2Ozmar69DgxMHRWjwuOLDDlb8xJJMq28c4pdvgLQcjPPocOIwKZ4nDRK7CQj+SelSkN+blaWv+WopIEpMAAAA=
-      '4':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yWLyw6CMBBFbwWN9A/8FZcmLlyzcEmKHeOEkUGmGD7fFnfnPo4HPPytvXTtRCJWoXmH9c8AnMt5sXT9LDyhQR1DCr4MFfY8Rloz44gdR5x41tE6K26vOtj5yTP1KsnhIPoYKBZL6EuSpRoOfjvfX7Q1Pzdunc6MAAAA
-  common_chest-3:
-    chance:
-      '0': 100
-      '1': 100
-      '2': 100
-      '3': 100
-      '4': 100
-    fall: true
-    type: CHEST
-    respawn_cmd: true
-    respawn_natural: true
-    take_message: true
-    direction: WEST
-    holo: common_chest
-    time: 30
-    protectionTime: 0
-    position:
-      world: dungeon
-      x: -4.0
-      y: -60.0
-      z: 19.0
-      pitch: 0.0
-      yaw: 0.0
-    lastreset: 1780300577245
-    particle: FLAME
-    randomradius: 0
-    maxFilledSlots: 0
-    inventory:
-      '0':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRON_INGOT
-      '1':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yXLTQ7CIBAF4IeosdzBi7g0ceG6C5eElmkkxU5lqKm3F+ru/eQzgIG5t1fbzhSjaDQvt/4zAKVKXyTf3kuY0WDvXXamHhqHMHlaS8YJu+BxDoknsVJtxzzKJbmv5cEOiSUrHCP3I/kqI30oFqihYDbweNK2/ACLJOdQkAAAAA==
-      '2':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yVMSw6CMBB9FTUyN/AqLk1cuGbhsinMJDaMFBgwHN8W8zbvTwCBns3dN6OoWoX6E7Y/B+Bc1qstj2mNI2ocOSyBSlDhFAeWLXNccIiMa5zTYN7Ktk2pt1voIvs0tw5nTV0vXFYqX9HykEF7+fWW3fkBIdsDU4wAAAA=
-      '3':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yWMzQ7CIBCEB6vG8hQ+h0cTD5578Eho2ZRNV6hCTR9faDOX+ck3GtDQz+5uuplEUoP2bdfdA1Cq5CXlx2fhGS2Ozmar69DgxMHRWjwuOLDDlb8xJJMq28c4pdvgLQcjPPocOIwKZ4nDRK7CQj+SelSkN+blaWv+WopIEpMAAAA=
-      '4':
-        ==: org.bukkit.inventory.ItemStack
-        v: 3465
-        type: IRONS_SPELLBOOKS_SCROLL
-        meta:
-          ==: ItemMeta
-          meta-type: UNSPECIFIC
-          internal: H4sIAAAAAAAA/yWLyw6CMBBFbwWN9A/8FZcmLlyzcEmKHeOEkUGmGD7fFnfnPo4HPPytvXTtRCJWoXmH9c8AnMt5sXT9LDyhQR1DCr4MFfY8Rloz44gdR5x41tE6K26vOtj5yTP1KsnhIPoYKBZL6EuSpRoOfjvfX7Q1Pzdunc6MAAAA
-  common_chest-2:
-    chance:
-      '0': 100
-      '1': 100
-      '2': 100
-      '3': 100
-      '4': 100
-    fall: true
-    type: CHEST
-    respawn_cmd: true
-    respawn_natural: true
-    take_message: true
     direction: SOUTH
     holo: common_chest
     time: 30
     protectionTime: 0
     position:
       world: dungeon
-      x: 63.0
-      y: -60.0
-      z: 97.0
+      x: -25.0
+      y: -59.0
+      z: -35.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577244
+    lastreset: 1780718285536
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -767,18 +916,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: EAST
+    direction: NORTH
     holo: rare_chest
     time: 10
     protectionTime: 0
     position:
       world: dungeon
-      x: 100.0
-      y: -60.0
-      z: -111.0
+      x: 4.0
+      y: -59.0
+      z: -127.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577242
+    lastreset: 1780718890542
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -801,12 +950,12 @@ chests:
     protectionTime: 0
     position:
       world: dungeon
-      x: 68.0
-      y: -60.0
-      z: -57.0
+      x: 26.0
+      y: -59.0
+      z: -116.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577238
+    lastreset: 1780718890541
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -823,18 +972,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: NORTH
+    direction: EAST
     holo: rare_chest
     time: 10
     protectionTime: 0
     position:
       world: dungeon
-      x: -54.0
-      y: -60.0
-      z: 71.0
+      x: -50.0
+      y: -59.0
+      z: 123.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577245
+    lastreset: 1780718890545
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -851,18 +1000,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: NORTH
+    direction: EAST
     holo: rare_chest
     time: 10
     protectionTime: 0
     position:
       world: dungeon
-      x: 17.0
-      y: -60.0
-      z: 29.0
+      x: -110.0
+      y: -59.0
+      z: 20.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577244
+    lastreset: 1780718890542
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -879,18 +1028,18 @@ chests:
     respawn_cmd: true
     respawn_natural: true
     take_message: true
-    direction: WEST
+    direction: SOUTH
     holo: rare_chest
     time: 10
     protectionTime: 0
     position:
       world: dungeon
-      x: -124.0
+      x: 133.0
       y: -60.0
-      z: -23.0
+      z: -65.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577238
+    lastreset: 1780718890546
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0
@@ -913,12 +1062,12 @@ chests:
     protectionTime: 0
     position:
       world: dungeon
-      x: 56.0
+      x: 134.0
       y: -60.0
-      z: 85.0
+      z: -84.0
       pitch: 0.0
       yaw: 0.0
-    lastreset: 1780300577245
+    lastreset: 1780718840536
     particle: FLAME
     randomradius: 0
     maxFilledSlots: 0

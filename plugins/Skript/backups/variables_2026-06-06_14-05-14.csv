@@ -1,0 +1,22 @@
+# === Skript's variable storage ===
+# Please do not modify this file manually!
+#
+# version: 2.8.7
+
+dungeon.admin, offlineplayer, 810475756964800455554944820C6C656173745369674269747304B62B5A9D09863B860B6D6F737453696742697473045429CD84C8A44F49
+dungeon.border.shrunk, boolean, 00
+dungeon.current.border.radius, long, 000000000000008A
+dungeon.cycle.id, long, 000000000000008D
+dungeon.emergency.portal, boolean, 00
+dungeon.events.count, long, 0000000000000000
+dungeon.exit.fixed.x, long, FFFFFFFFFFFFFFF9
+dungeon.exit.fixed.y, long, FFFFFFFFFFFFFFC4
+dungeon.exit.fixed.z, long, FFFFFFFFFFFFFF76
+dungeon.exit.x, long, 000000000000007A
+dungeon.exit.y, long, FFFFFFFFFFFFFFC4
+dungeon.exit.z, long, 0000000000000080
+dungeon.floor-y, long, FFFFFFFFFFFFFFC6
+dungeon.open, boolean, 00
+dungeon.random.portal.spawned, boolean, 00
+dungeon.resetting, boolean, 01
+

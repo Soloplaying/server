@@ -11,7 +11,7 @@
 # --- CONFIGURATION ---
 options:
     portal-x: 0
-    portal-y: 64
+    portal-y: -60
     portal-z: 0
     portal-world: world
     dungeon-world: dungeon
@@ -32,14 +32,38 @@ on script load:
     if {dungeon.cycle.id} is not set:
         set {dungeon.cycle.id} to 100
     set {dungeon.open} to false
+    set {dungeon.resetting} to false
     delete {dungeon.players::*}
     delete {dungeon.timer::*}
     delete {dungeon.bypassing::*}
     delete {dungeon.standing::*}
     delete {dungeon.entering::*}
+    delete {dungeon.standing.entry::*}
+    delete {dungeon.entered.cycle::*}
+    set {dungeon.events.count} to 0
+    delete {dungeon.boss.spawned}
+    # Lock dungeon to peaceful on start
+    execute console command "mv modify set gamemode adventure dungeon"
+    execute console command "execute in dungeon run difficulty hard"
+    execute console command "mv modify set pvp false world"
+    execute console command "mv modify set pvp true dungeon"
     broadcast "&8[&4Dungeon&8] &7Server started. Dungeon cycle initializing..."
     wait 10 seconds
     resetDungeon()
+
+# Cancel spawns outside maze X/Z bounds in dungeon world
+on spawn of entity:
+    if name of world of entity is "{@dungeon-world}":
+        set {_ex} to x-coordinate of entity
+        set {_ez} to z-coordinate of entity
+        if {_ex} > {@maze-max-x}:
+            cancel event
+        if {_ex} < {@maze-min-x}:
+            cancel event
+        if {_ez} > {@maze-max-z}:
+            cancel event
+        if {_ez} < {@maze-min-z}:
+            cancel event
 
 # =============================================
 # HELPER — OP CHECK
@@ -52,6 +76,7 @@ function isOP(p: player) :: boolean:
 # =============================================
 # FUNCTIONS
 # =============================================
+
 
 function spawnRandomPortalDelayed(cycle: number):
     while {dungeon.open} is true:
@@ -141,11 +166,19 @@ function startDungeonCycle():
         resetDungeon()
 
 function resetDungeon():
+    # Guard against concurrent resets
+    if {dungeon.resetting} is true:
+        stop
+    set {dungeon.resetting} to true
     set {dungeon.open} to false
     set {dungeon.border.shrunk} to false
     set {dungeon.current.border.radius} to 138
     # Increment cycle ID first — kills ALL stale timers immediately
     add 1 to {dungeon.cycle.id}
+    delete {dungeon.standing::*}
+    delete {dungeon.standing.entry::*}
+    set {dungeon.events.count} to 0
+    delete {dungeon.boss.spawned}
     # Eject registered players only
     if {dungeon.players::*} is set:
         broadcast "&8[&4Dungeon&8] &cDungeon resetting! Players ejected in 10 seconds!"
@@ -158,6 +191,15 @@ function resetDungeon():
     removeExitPortal()
     execute console command "maze unbuild"
     wait 3 seconds
+    # Restore dungeon floor in 4 quarters (stay under 32768 block limit)
+    execute console command "execute in dungeon run fill -130 -61 -130 0 -61 0 bedrock"
+    wait 1 second
+    execute console command "execute in dungeon run fill 0 -61 0 130 -61 130 bedrock"
+    wait 1 second
+    execute console command "execute in dungeon run fill -130 -61 0 0 -61 130 bedrock"
+    wait 1 second
+    execute console command "execute in dungeon run fill 0 -61 -130 130 -61 0 bedrock"
+    wait 1 second
     execute console command "maze load dungeon_layout"
     wait 3 seconds
     set {_wallheight} to a random integer between 5 and 12
@@ -227,10 +269,20 @@ function resetDungeon():
     wait 2 seconds
     spawnExitPortal()
     createEntryPortal()
+    # Apply world settings right before opening
+    #execute console command "execute in dungeon run difficulty hard"
+    #wait 1 second
+    #execute console command "mv modify set gamemode adventure dungeon"
+    #wait 1 second
+    #execute console command "mv modify set pvp false world"
+    #wait 1 second
+    #execute console command "mv modify set pvp true dungeon"
+    #wait 1 second
     set {dungeon.open} to true
     set {dungeon.random.portal.spawned} to false
     set {dungeon.border.shrunk} to false
     set {dungeon.current.border.radius} to 138
+    set {dungeon.resetting} to false
     broadcast "&8[&4Dungeon&8] &aThe dungeon is now open!"
     broadcast "&8[&4Dungeon&8] &7Style: &e%{_style-name}%"
     broadcast "&8[&4Dungeon&8] &7Wall Height: &f%{_wallheight}% &7| Path Width: &f%{_pathwidth}% &7| Curliness: &f%{_curliness}%"
@@ -242,16 +294,19 @@ function resetDungeon():
     spawnRandomPortalDelayed({_cycle-id})
     shrinkBorderDelayed({_cycle-id})
     startDungeonCycle()
+    randomEventLoop({_cycle-id})
 
 function createEntryPortal():
-    set block at location({@portal-x}, {@portal-y}, {@portal-z}, world "{@portal-world}") to nether portal
-    set block at location({@portal-x}, {@portal-y} + 1, {@portal-z}, world "{@portal-world}") to nether portal
-    set block at location({@portal-x}, {@portal-y} + 2, {@portal-z}, world "{@portal-world}") to nether portal
+    set block at location({@portal-x}, {@portal-y}, {@portal-z}, world "{@portal-world}") to green wool
+    set block at location({@portal-x} + 1, {@portal-y}, {@portal-z}, world "{@portal-world}") to green wool
+    set block at location({@portal-x}, {@portal-y}, {@portal-z} + 1, world "{@portal-world}") to green wool
+    set block at location({@portal-x} + 1, {@portal-y}, {@portal-z} + 1, world "{@portal-world}") to green wool
 
 function removeEntryPortal():
     set block at location({@portal-x}, {@portal-y}, {@portal-z}, world "{@portal-world}") to air
-    set block at location({@portal-x}, {@portal-y} + 1, {@portal-z}, world "{@portal-world}") to air
-    set block at location({@portal-x}, {@portal-y} + 2, {@portal-z}, world "{@portal-world}") to air
+    set block at location({@portal-x} + 1, {@portal-y}, {@portal-z}, world "{@portal-world}") to air
+    set block at location({@portal-x}, {@portal-y}, {@portal-z} + 1, world "{@portal-world}") to air
+    set block at location({@portal-x} + 1, {@portal-y}, {@portal-z} + 1, world "{@portal-world}") to air
 
 # Spawn fixed 2x2 green wool exit pad
 function spawnExitPortal():
@@ -294,6 +349,7 @@ function forceEjectPlayer(p: player):
     if {dungeon.players::%uuid of {_p}%} is set:
         send "&8[&4Dungeon&8] &cYou have been forcefully ejected! All items lost." to {_p}
         clear inventory of {_p}
+        set gamemode of {_p} to survival
         set {dungeon.bypassing::%uuid of {_p}%} to true
         teleport {_p} to spawn of world "{@portal-world}"
         delete {dungeon.players::%uuid of {_p}%}
@@ -303,15 +359,43 @@ function forceEjectPlayer(p: player):
 
 # Registers and teleports a NON-OP player into dungeon with 45-min eject timer
 function enterDungeon(p: player):
-    set {_x} to a random integer between {@maze-min-x} and {@maze-max-x}
-    set {_z} to a random integer between {@maze-min-z} and {@maze-max-z}
-    set {_y} to {@maze-floor-y} + 1
+    # Find safe spawn — try random locations until one is safe
+    set {_found} to false
+    set {_attempts} to 0
+    while {_found} is false:
+        add 1 to {_attempts}
+        # After 10 failed attempts fall back to center
+        if {_attempts} > 10:
+            set {_x} to 0
+            set {_z} to 0
+            set {_y} to {@maze-floor-y} + 2
+            set {_found} to true
+            stop loop
+        # Pick new random X/Z
+        set {_x} to a random integer between {@maze-min-x} and {@maze-max-x}
+        set {_z} to a random integer between {@maze-min-z} and {@maze-max-z}
+        set {_y} to {@maze-floor-y} + 1
+        # Scan upward for two consecutive air blocks
+        set {_scan} to 0
+        while {_scan} < 15:
+            set {_block1} to block at location({_x}, {_y}, {_z}, world "{@dungeon-world}")
+            set {_block2} to block at location({_x}, {_y} + 1, {_z}, world "{@dungeon-world}")
+            if type of {_block1} is air:
+                if type of {_block2} is air:
+                    set {_found} to true
+                    stop loop
+            add 1 to {_y}
+            add 1 to {_scan}
     set {dungeon.entering::%uuid of {_p}%} to true
     set {dungeon.bypassing::%uuid of {_p}%} to true
     teleport {_p} to location({_x}, {_y}, {_z}, world "{@dungeon-world}")
     delete {dungeon.bypassing::%uuid of {_p}%}
     delete {dungeon.entering::%uuid of {_p}%}
     set {dungeon.players::%uuid of {_p}%} to {_p}
+    wait 2 ticks
+    set gamemode of {_p} to adventure
+    # Track which cycle this player entered — prevents re-entry same cycle
+    set {dungeon.entered.cycle::%uuid of {_p}%} to {dungeon.cycle.id}
     send "&8[&4Dungeon&8] &aYou entered the dungeon!" to {_p}
     send "&8[&4Dungeon&8] &eFixed exit pad: &fNorth wall (-7, -60, -138)" to {_p}
     send "&8[&4Dungeon&8] &7A random exit pad will appear in 5-10 minutes!" to {_p}
@@ -346,36 +430,47 @@ every 2 seconds:
                 if {dungeon.border.shrunk} is true:
                     set {_limit} to {dungeon.current.border.radius}
                 set {_y} to {@maze-floor-y} + 2
-                set {_step} to 1
+                set {_step} to 4
                 set {_neg-limit} to {_limit} * -1
                 set {_dust} to dustOption(red, 3)
+                set {_px} to x-coordinate of loop-player
+                set {_pz} to z-coordinate of loop-player
+                set {_render} to 48
                 set {_x} to {_neg-limit}
                 while {_x} <= {_limit}:
-                    draw 1 of dust using {_dust} at location({_x}, {_y}, {_neg-limit}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_x}, {_y} + 1, {_neg-limit}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_x}, {_y} + 2, {_neg-limit}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_x}, {_y} + 3, {_neg-limit}, world "{@dungeon-world}")
+                    if {_x} > ({_px} - {_render}):
+                        if {_x} < ({_px} + {_render}):
+                            draw 1 of dust using {_dust} at location({_x}, {_y}, {_neg-limit}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_x}, {_y} + 1, {_neg-limit}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_x}, {_y} + 2, {_neg-limit}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_x}, {_y} + 3, {_neg-limit}, world "{@dungeon-world}")
                     add {_step} to {_x}
                 set {_x} to {_neg-limit}
                 while {_x} <= {_limit}:
-                    draw 1 of dust using {_dust} at location({_x}, {_y}, {_limit}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_x}, {_y} + 1, {_limit}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_x}, {_y} + 2, {_limit}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_x}, {_y} + 3, {_limit}, world "{@dungeon-world}")
+                    if {_x} > ({_px} - {_render}):
+                        if {_x} < ({_px} + {_render}):
+                            draw 1 of dust using {_dust} at location({_x}, {_y}, {_limit}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_x}, {_y} + 1, {_limit}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_x}, {_y} + 2, {_limit}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_x}, {_y} + 3, {_limit}, world "{@dungeon-world}")
                     add {_step} to {_x}
                 set {_z} to {_neg-limit}
                 while {_z} <= {_limit}:
-                    draw 1 of dust using {_dust} at location({_neg-limit}, {_y}, {_z}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_neg-limit}, {_y} + 1, {_z}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_neg-limit}, {_y} + 2, {_z}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_neg-limit}, {_y} + 3, {_z}, world "{@dungeon-world}")
+                    if {_z} > ({_pz} - {_render}):
+                        if {_z} < ({_pz} + {_render}):
+                            draw 1 of dust using {_dust} at location({_neg-limit}, {_y}, {_z}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_neg-limit}, {_y} + 1, {_z}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_neg-limit}, {_y} + 2, {_z}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_neg-limit}, {_y} + 3, {_z}, world "{@dungeon-world}")
                     add {_step} to {_z}
                 set {_z} to {_neg-limit}
                 while {_z} <= {_limit}:
-                    draw 1 of dust using {_dust} at location({_limit}, {_y}, {_z}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_limit}, {_y} + 1, {_z}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_limit}, {_y} + 2, {_z}, world "{@dungeon-world}")
-                    draw 1 of dust using {_dust} at location({_limit}, {_y} + 3, {_z}, world "{@dungeon-world}")
+                    if {_z} > ({_pz} - {_render}):
+                        if {_z} < ({_pz} + {_render}):
+                            draw 1 of dust using {_dust} at location({_limit}, {_y}, {_z}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_limit}, {_y} + 1, {_z}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_limit}, {_y} + 2, {_z}, world "{@dungeon-world}")
+                            draw 1 of dust using {_dust} at location({_limit}, {_y} + 3, {_z}, world "{@dungeon-world}")
                     add {_step} to {_z}
                 stop loop
 
@@ -417,7 +512,8 @@ every 1 second:
                 set {_px} to x-coordinate of loop-player
                 set {_py} to y-coordinate of loop-player
                 set {_pz} to z-coordinate of loop-player
-                set {_below} to block at location({_px}, {_py} - 1, {_pz}, world "{@dungeon-world}")
+                set {_floory} to floor({_py})
+                set {_below} to block at location({_px}, {_floory} - 1, {_pz}, world "{@dungeon-world}")
                 if "%type of {_below}%" contains "green wool":
                     set {_pad-type} to ""
                     # Check fixed pad (-7, -60, -138) and (-6, -60, -139)
@@ -478,16 +574,80 @@ every 1 second:
                                 send "&8[&4Dungeon&8] &aYou escaped via the random exit! Items kept." to loop-player
                             else if {_pad-type} is "emergency":
                                 send "&8[&4Dungeon&8] &6You escaped via the emergency exit! Items kept." to loop-player
+                            set gamemode of loop-player to survival
                             set {dungeon.bypassing::%uuid of loop-player%} to true
                             teleport loop-player to spawn of world "{@portal-world}"
                             delete {dungeon.players::%uuid of loop-player%}
                             delete {dungeon.timer::%uuid of loop-player%}
                             wait 1 second
                             delete {dungeon.bypassing::%uuid of loop-player%}
+                            stop loop
                     else:
                         delete {dungeon.standing::%uuid of loop-player%}
                 else:
                     delete {dungeon.standing::%uuid of loop-player%}
+
+# =============================================
+# ENTRY WOOL PAD DETECTION (farming world)
+# =============================================
+
+every 1 second:
+    loop all players:
+        if name of world of loop-player is "{@portal-world}":
+            if {dungeon.bypassing::%uuid of loop-player%} is not set:
+                set {_px} to x-coordinate of loop-player
+                set {_py} to y-coordinate of loop-player
+                set {_pz} to z-coordinate of loop-player
+                set {_floory} to floor({_py})
+                set {_below} to block at location({_px}, {_floory} - 1, {_pz}, world "{@portal-world}")
+                if "%type of {_below}%" contains "green wool":
+                    set {_entry-x} to {@portal-x}
+                    set {_entry-z} to {@portal-z}
+                    set {_dx} to {_px} - {_entry-x}
+                    if {_dx} < 0:
+                        set {_dx} to {_dx} * -1
+                    set {_dz} to {_pz} - {_entry-z}
+                    if {_dz} < 0:
+                        set {_dz} to {_dz} * -1
+                    if {_dx} <= 2:
+                        if {_dz} <= 2:
+                            if {dungeon.open} is true:
+                                if {dungeon.players::%uuid of loop-player%} is not set:
+                                    # One entry per cycle check
+                                    set {_entered-cycle} to {dungeon.entered.cycle::%uuid of loop-player%}
+                                    if {_entered-cycle} is not {dungeon.cycle.id}:
+                                        if {dungeon.standing.entry::%uuid of loop-player%} is not set:
+                                            set {dungeon.standing.entry::%uuid of loop-player%} to 1
+                                        else:
+                                            add 1 to {dungeon.standing.entry::%uuid of loop-player%}
+                                        set {_count} to {dungeon.standing.entry::%uuid of loop-player%}
+                                        if {_count} is 1:
+                                            send action bar "&aStand still to enter dungeon... &e3" to loop-player
+                                        else if {_count} is 2:
+                                            send action bar "&aStand still to enter dungeon... &e2" to loop-player
+                                        else if {_count} is 3:
+                                            send action bar "&aStand still to enter dungeon... &e1" to loop-player
+                                        if {_count} >= 3:
+                                            delete {dungeon.standing.entry::%uuid of loop-player%}
+                                            set {_partner} to {dungeon.team.partner::%uuid of loop-player%}
+                                            if {_partner} is set:
+                                                if {_partner} is online:
+                                                    enterDungeon(loop-player)
+                                                    enterDungeon({_partner})
+                                                else:
+                                                    enterDungeon(loop-player)
+                                            else:
+                                                enterDungeon(loop-player)
+                                            stop loop
+                                    else:
+                                        send action bar "&cYou have already entered this dungeon cycle!" to loop-player
+                                        # Reset counter — player cannot enter anyway so no need to accumulate
+                                        set {dungeon.standing.entry::%uuid of loop-player%} to 0
+                            else:
+                                send action bar "&cThe dungeon is currently closed!" to loop-player
+                                delete {dungeon.standing.entry::%uuid of loop-player%}
+                else:
+                    delete {dungeon.standing.entry::%uuid of loop-player%}
 
 # =============================================
 # EVENTS
@@ -508,19 +668,9 @@ on player world change:
         # Non-OP players
         if {dungeon.bypassing::%uuid of player%} is not set:
             if {dungeon.open} is true:
+                # Register if not already registered (safety net for non-wool entry)
                 if {dungeon.players::%uuid of player%} is not set:
-                    set {_partner} to {dungeon.team.partner::%uuid of player%}
-                    if {_partner} is set:
-                        if {_partner} is online:
-                            if {dungeon.players::%uuid of {_partner}%} is not set:
-                                enterDungeon(player)
-                                enterDungeon({_partner})
-                            else:
-                                enterDungeon(player)
-                        else:
-                            enterDungeon(player)
-                    else:
-                        enterDungeon(player)
+                    enterDungeon(player)
             else:
                 set {dungeon.bypassing::%uuid of player%} to true
                 teleport player to spawn of world "{@portal-world}"
@@ -547,10 +697,22 @@ on respawn:
     if {dungeon.respawn::%uuid of player%} is set:
         delete {dungeon.respawn::%uuid of player%}
         clear inventory of player
+        set gamemode of player to survival
         set {dungeon.bypassing::%uuid of player%} to true
         teleport player to spawn of world "{@portal-world}"
         wait 1 second
         delete {dungeon.bypassing::%uuid of player%}
+
+# Allow breaking but cancel drops in dungeon world
+on mine:
+    if name of world of player is "{@dungeon-world}":
+        clear drops
+
+# Cancel explosion drops but allow block destruction in dungeon world
+on explode:
+    if name of world of event-location is "{@dungeon-world}":
+        loop exploded blocks:
+            set loop-block to air
 
 # Prevent leaving dungeon — OPs fully exempt via bypassing flag
 on player teleport:
@@ -562,6 +724,160 @@ on player teleport:
                     send "&cYou cannot leave the dungeon this way!" to player
 
 # =============================================
+# RANDOM EVENT SYSTEM
+# =============================================
+
+function randomEventLoop(cycle: number):
+    set {_delay} to a random integer between 480 and 720
+    set {_wait} to "%{_delay}% seconds" parsed as timespan
+    wait {_wait}
+    while {dungeon.open} is true:
+        if {dungeon.cycle.id} is not {_cycle}:
+            stop
+        if {dungeon.events.count} >= 3:
+            stop
+        triggerRandomEvent({_cycle})
+        if {dungeon.events.count} >= 3:
+            stop
+        set {_delay} to a random integer between 480 and 720
+        set {_wait} to "%{_delay}% seconds" parsed as timespan
+        wait {_wait}
+
+function triggerRandomEvent(cycle: number):
+    if {dungeon.cycle.id} is not {_cycle}:
+        stop
+    if {dungeon.open} is false:
+        stop
+    add 1 to {dungeon.events.count}
+    set {_max} to 4
+    if {dungeon.boss.spawned} is not set:
+        set {_max} to 5
+    set {_r} to a random integer between 1 and {_max}
+    if {_r} is 1:
+        eventDarkness()
+    else if {_r} is 2:
+        eventMobSurge({_cycle})
+    else if {_r} is 3:
+        eventDripstoneRain({_cycle})
+    else if {_r} is 4:
+        eventRandomTNT({_cycle})
+    else if {_r} is 5:
+        set {dungeon.boss.spawned} to true
+        eventBossSpawn({_cycle})
+
+function eventDarkness():
+    broadcast "&8[&4Dungeon&8] &5&l⚠ DARKNESS FALLS! &7Vision impaired for 30 seconds!"
+    loop {dungeon.players::*}:
+        apply blindness to loop-value for 30 seconds
+        apply darkness to loop-value for 30 seconds
+
+function eventMobSurge(cycle: number):
+    if {dungeon.cycle.id} is not {_cycle}:
+        stop
+    broadcast "&8[&4Dungeon&8] &c&l⚠ MOB SURGE! Enemies are closing in!"
+    loop {dungeon.players::*}:
+        set {_p} to loop-value
+        set {_px} to x-coordinate of {_p}
+        set {_pz} to z-coordinate of {_p}
+        loop 4 times:
+            set {_ox} to a random integer between -10 and 10
+            set {_oz} to a random integer between -10 and 10
+            set {_sx} to {_px} + {_ox}
+            set {_sz} to {_pz} + {_oz}
+            if {_sx} > 128:
+                set {_sx} to 128
+            if {_sx} < -128:
+                set {_sx} to -128
+            if {_sz} > 128:
+                set {_sz} to 128
+            if {_sz} < -128:
+                set {_sz} to -128
+            set {_sy} to {@maze-floor-y} + 1
+            loop 12 times:
+                if type of block at location({_sx}, {_sy}, {_sz}, world "{@dungeon-world}") is air:
+                    if type of block at location({_sx}, {_sy} + 1, {_sz}, world "{@dungeon-world}") is air:
+                        set {_m} to a random integer between 1 and 4
+                        if {_m} is 1:
+                            spawn a zombie at location({_sx}, {_sy}, {_sz}, world "{@dungeon-world}")
+                        else if {_m} is 2:
+                            spawn a skeleton at location({_sx}, {_sy}, {_sz}, world "{@dungeon-world}")
+                        else if {_m} is 3:
+                            spawn a spider at location({_sx}, {_sy}, {_sz}, world "{@dungeon-world}")
+                        else if {_m} is 4:
+                            spawn a creeper at location({_sx}, {_sy}, {_sz}, world "{@dungeon-world}")
+                        stop loop
+                add 1 to {_sy}
+
+function eventDripstoneRain(cycle: number):
+    if {dungeon.cycle.id} is not {_cycle}:
+        stop
+    set {_cx} to a random integer between -110 and 110
+    set {_cz} to a random integer between -110 and 110
+    broadcast "&8[&4Dungeon&8] &b&l⚠ STALACTITE RAIN at X:%{_cx}% Z:%{_cz}%! Move away fast!"
+    wait 3 seconds
+    if {dungeon.cycle.id} is not {_cycle}:
+        stop
+    loop 7 times:
+        set {_ix} to loop-number
+        subtract 4 from {_ix}
+        loop 7 times:
+            set {_iz} to loop-number-2
+            subtract 4 from {_iz}
+            set {_lx} to {_cx} + {_ix}
+            set {_lz} to {_cz} + {_iz}
+            set {_cy} to {@maze-floor-y} + 16
+            loop 14 times:
+                subtract 1 from {_cy}
+                if type of block at location({_lx}, {_cy}, {_lz}, world "{@dungeon-world}") is not air:
+                    set {_dy} to {_cy} - 2
+                    if {_dy} > {@maze-floor-y}:
+                        if type of block at location({_lx}, {_dy}, {_lz}, world "{@dungeon-world}") is air:
+                            execute console command "execute in minecraft:dungeon run setblock %{_lx}% %{_dy}% %{_lz}% minecraft:pointed_dripstone[vertical_direction=down,thickness=tip]"
+                    stop loop
+
+function eventRandomTNT(cycle: number):
+    if {dungeon.cycle.id} is not {_cycle}:
+        stop
+    broadcast "&8[&4Dungeon&8] &c&l⚠ TRAP TRIGGERED! TNT has been placed in the maze!"
+    loop 5 times:
+        set {_tx} to a random integer between {@maze-min-x} and {@maze-max-x}
+        set {_tz} to a random integer between {@maze-min-z} and {@maze-max-z}
+        set {_ty} to {@maze-floor-y} + 1
+        loop 10 times:
+            if type of block at location({_tx}, {_ty}, {_tz}, world "{@dungeon-world}") is air:
+                if type of block at location({_tx}, {_ty} - 1, {_tz}, world "{@dungeon-world}") is not air:
+                    execute console command "execute in minecraft:dungeon run summon minecraft:tnt %{_tx}% %{_ty}% %{_tz}%"
+                    stop loop
+            add 1 to {_ty}
+
+function eventBossSpawn(cycle: number):
+    if {dungeon.cycle.id} is not {_cycle}:
+        stop
+    set {_spawned} to false
+    loop {dungeon.players::*}:
+        if {_spawned} is false:
+            set {_p} to loop-value
+            set {_bx} to x-coordinate of {_p} + 5
+            set {_by} to {@maze-floor-y} + 1
+            set {_bz} to z-coordinate of {_p} + 5
+            loop 12 times:
+                if type of block at location({_bx}, {_by}, {_bz}, world "{@dungeon-world}") is air:
+                    if type of block at location({_bx}, {_by} + 1, {_bz}, world "{@dungeon-world}") is air:
+                        spawn an evoker at location({_bx}, {_by}, {_bz}, world "{@dungeon-world}")
+                        set max health of last spawned entity to 100
+                        set health of last spawned entity to 100
+                        set {_spawned} to true
+                        stop loop
+                add 1 to {_by}
+    if {_spawned} is true:
+        broadcast "&8[&4Dungeon&8] &4&l☠ A DUNGEON BOSS HAS APPEARED! Beware!"
+    else:
+        spawn an evoker at location(0, {@maze-floor-y} + 1, 0, world "{@dungeon-world}")
+        set max health of last spawned entity to 100
+        set health of last spawned entity to 100
+        broadcast "&8[&4Dungeon&8] &4&l☠ A DUNGEON BOSS IS ROAMING THE CENTER! Beware!"
+
+# =============================================
 # COMMANDS
 # =============================================
 
@@ -570,11 +886,13 @@ command /checkblock:
         set {_px} to x-coordinate of player
         set {_py} to y-coordinate of player
         set {_pz} to z-coordinate of player
-        set {_below} to block at location({_px}, {_py} - 1, {_pz}, world of player)
+        set {_floory} to floor({_py})
+        set {_below} to block at location({_px}, {_floory} - 1, {_pz}, world of player)
         send "&eBlock below: &f%type of {_below}%" to player
         send "&eWorld: &f%name of world of player%" to player
         send "&eRegistered: &f%{dungeon.players::%uuid of player%}%" to player
         send "&eCycle ID: &f%{dungeon.cycle.id}%" to player
+        send "&eEntered cycle: &f%{dungeon.entered.cycle::%uuid of player%}%" to player
         send "&eTimer cycle: &f%{dungeon.timer::%uuid of player%}%" to player
         send "&eBypass flag: &f%{dungeon.bypassing::%uuid of player%}%" to player
         send "&eEntering flag: &f%{dungeon.entering::%uuid of player%}%" to player
@@ -595,6 +913,8 @@ command /dungeonenter:
         if {dungeon.open} is true:
             delete {dungeon.bypassing::%uuid of player%}
             delete {dungeon.entering::%uuid of player%}
+            # Reset entered cycle so OP can re-enter for testing
+            delete {dungeon.entered.cycle::%uuid of player%}
             enterDungeon(player)
             send "&aEntered dungeon as registered player with 45-min timer." to player
         else:
@@ -608,6 +928,13 @@ command /dungeonteam <player>:
         if {dungeon.players::%uuid of player%} is set:
             send "&cYou cannot change teams while inside the dungeon!" to player
             stop
+        # Clean up old partners before forming new team
+        set {_old-partner-of-player} to {dungeon.team.partner::%uuid of player%}
+        if {_old-partner-of-player} is set:
+            delete {dungeon.team.partner::%uuid of {_old-partner-of-player}%}
+        set {_old-partner-of-arg} to {dungeon.team.partner::%uuid of arg-1%}
+        if {_old-partner-of-arg} is set:
+            delete {dungeon.team.partner::%uuid of {_old-partner-of-arg}%}
         set {dungeon.team.partner::%uuid of player%} to arg-1
         set {dungeon.team.partner::%uuid of arg-1%} to player
         send "&8[&4Dungeon&8] &aYou are now teamed with &e%arg-1%&a!" to player
@@ -658,3 +985,31 @@ command /dungeoneject <player>:
             send "&aEjected %arg-1% from dungeon." to player
         else:
             send "&c%arg-1% is not in the dungeon." to player
+
+command /dungeonevent <text>:
+    permission: op
+    trigger:
+        if {dungeon.open} is false:
+            send "&cDungeon is not open." to player
+            stop
+        set {_event} to arg-1
+        if {_event} is "darkness":
+            eventDarkness()
+            send "&aForced event: Darkness" to player
+        else if {_event} is "mobsurge":
+            eventMobSurge({dungeon.cycle.id})
+            send "&aForced event: Mob Surge" to player
+        else if {_event} is "dripstone":
+            eventDripstoneRain({dungeon.cycle.id})
+            send "&aForced event: Dripstone Rain" to player
+        else if {_event} is "tnt":
+            eventRandomTNT({dungeon.cycle.id})
+            send "&aForced event: Random TNT" to player
+        else if {_event} is "boss":
+            eventBossSpawn({dungeon.cycle.id})
+            send "&aForced event: Boss Spawn" to player
+        else if {_event} is "random":
+            triggerRandomEvent({dungeon.cycle.id})
+            send "&aForced event: Random (rolled)" to player
+        else:
+            send "&cUnknown event. Options: &fdarkness, mobsurge, dripstone, tnt, boss, random" to player

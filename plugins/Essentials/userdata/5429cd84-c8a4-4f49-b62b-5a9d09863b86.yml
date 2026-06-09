@@ -3,7 +3,7 @@ teleportauto: false
 godmode: false
 muted: false
 jailed: false
-ip-address: fd9a:fd3c:25cc:fbe:2875:a75c:f3a:1f1
+ip-address: fd9a:fd3c:25cc:fbe:819c:ca91:b43:3f7f
 afk: false
 socialspy: false
 npc: false
@@ -16,23 +16,23 @@ timestamps:
   mute: 0
   jail: 0
   onlinejail: 0
-  logout: 1780300712697
-  login: 1780295731461
+  logout: 1780726336171
+  login: 1780711795377
 money: '0'
 last-account-name: Yummy_Tuna
 logoutlocation:
-  world: 6e40889c-6265-4c15-b4a3-b3bf5da4fe5a
-  world-name: world
-  x: -5.538894703309433
-  y: -60.0
-  z: -11.155735304247933
-  yaw: 75.03411865234375
-  pitch: 26.526565551757812
+  world: 4a3e9d87-fa60-45a2-b596-ef3d0d0481a7
+  world-name: dungeon
+  x: 94.30000001192093
+  y: -58.19690440055024
+  z: -107.80091253266774
+  yaw: 40.6517333984375
+  pitch: 14.999643325805664
 lastlocation:
   world: 4a3e9d87-fa60-45a2-b596-ef3d0d0481a7
   world-name: dungeon
-  x: -94.52523280263974
-  y: -60.0
-  z: -128.03253129772224
-  yaw: -178.50582885742188
-  pitch: 16.176433563232422
+  x: -91.5
+  y: -55.0
+  z: -116.5
+  yaw: 14.551353454589844
+  pitch: 28.949787139892578

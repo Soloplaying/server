@@ -1,0 +1,89 @@
+[
+  {
+    "dimension": "minecraft:overworld",
+    "hostile": true,
+    "when": "onjoin",
+    "result": "deny"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:zombie",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:zombie_villager",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:husk",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:drowned",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:skeleton",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:spider",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:cave_spider",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:creeper",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:pillager",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:vindicator",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "mob": "minecraft:evoker",
+    "minheight": -61,
+    "maxheight": -50,
+    "result": "allow"
+  },
+  {
+    "dimension": "dungeon",
+    "result": "deny"
+  }
+]

@@ -1,0 +1,31 @@
+# === Skript's variable storage ===
+# Please do not modify this file manually!
+#
+# version: 2.8.7
+
+dungeon.admin, offlineplayer, 810475756964800455554944820C6C656173745369674269747304B62B5A9D09863B860B6D6F737453696742697473045429CD84C8A44F49
+dungeon.border.shrunk, boolean, 01
+dungeon.current.border.radius, long, 0000000000000019
+dungeon.cycle.id, long, 0000000000000062
+dungeon.emergency.portal, boolean, 01
+dungeon.exit.fixed.x, long, FFFFFFFFFFFFFFF9
+dungeon.exit.fixed.y, long, FFFFFFFFFFFFFFC4
+dungeon.exit.fixed.z, long, FFFFFFFFFFFFFF76
+dungeon.exit.x, long, 000000000000007A
+dungeon.exit.x.1, long, FFFFFFFFFFFFFFC1
+dungeon.exit.x.2, long, 000000000000005F
+dungeon.exit.x.3, long, FFFFFFFFFFFFFF92
+dungeon.exit.y, long, FFFFFFFFFFFFFFC4
+dungeon.exit.y.1, long, FFFFFFFFFFFFFFC4
+dungeon.exit.y.2, long, FFFFFFFFFFFFFFC4
+dungeon.exit.y.3, long, FFFFFFFFFFFFFFC4
+dungeon.exit.z, long, 0000000000000080
+dungeon.exit.z.1, long, FFFFFFFFFFFFFFF7
+dungeon.exit.z.2, long, FFFFFFFFFFFFFFAE
+dungeon.exit.z.3, long, FFFFFFFFFFFFFFEB
+dungeon.floor-y, long, FFFFFFFFFFFFFFC6
+dungeon.open, boolean, 01
+dungeon.players::5429cd84-c8a4-4f49-b62b-5a9d09863b86, offlineplayer, 810475756964800455554944820C6C656173745369674269747304B62B5A9D09863B860B6D6F737453696742697473045429CD84C8A44F49
+dungeon.random.portal.spawned, boolean, 01
+dungeon.timer::5429cd84-c8a4-4f49-b62b-5a9d09863b86, long, 0000000000000062
+
